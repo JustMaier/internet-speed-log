@@ -10,45 +10,50 @@ If you have a NAS this is as easy as 'setup and forget', as the NAS will most li
 ![Screenshot](https://raw.githubusercontent.com/kitsunekyo/internet-speed-log/master/img/screenshot.jpg)
 
 ## Requirements
-* OS: Unix (I'm using a Synology NAS)
-* ssh access to your server if you're using a NAS
 * nodejs installed
-* npm packages globally installed: http-server, forever
-* speedtest-cli
 
 ## Installation
 Clone the repository
 ```
 git clone https://github.com/kitsunekyo/internet-speed-log
 ```
-Install the required npm packages if you havent already
+Install the npm packages
 ```
-npm install -g http-server forever
+cd internet-speed-log
+npm install
 ```
-Install speedtest-cli to any location on your server:   
-[https://github.com/sivel/speedtest-cli](https://github.com/sivel/speedtest-cli)
-
-Edit `speedtest.sh` and change the location of your log file to wherever you want to have it. Remember thatt this has to be an absolute URI.
-```
-#!/bin/sh
-SPEED_RESULT=[$(python /LOCATION/TO/speedtest-cli --json)]
-TMP=$(jq '.log |= .+ '"$SPEED_RESULT" /LOCATION/TO/log.json)
-echo $TMP > /LOCATION/TO/log.json
-echo 'Last Speedtest:'
-jq '.log[-1]' /LOCATION/TO/log.json
-```
-
-Configure a cronjob for this script with `crontab -e` or `/etc/crontab`. My NAS has a feature to configure this via a "Task Scheduler" in the web interface.    
-You can set it up however you like, log daily, weekly or per hour.
-
-Read more on crontab here. [https://wiki.ubuntuusers.de/Cron/](https://wiki.ubuntuusers.de/Cron/)
 
 ## Usage
-Start the http-server and let it run with forever, so the process doesnt close once you shut down your ssh session.
+Start the http-server
 
 ```
-forever start /usr/local/lib/node_modules/http-server/bin/http-server /LOCATION/TO/YOUR/FILES -d false
+node server.js
 ```
-This will start a http-server on port 8080 and host the files you have in that location.
+This will start a http-server on port 8000 (unless you've changed that in the config).
 
-You can then navigate to http://yourserver:8080 and view the index.html. You might need to use the ip instead of `yourserver` if you dont have a dns entry or host alias for that machine.
+You can then navigate to http://localhost:8000 and view the index.html
+
+### Usage with NAS
+
+To prevent your server from shutting down when you close you SSH session, install the `forever` npm package
+```
+npm install -g forever
+```
+Then run the server with `forever`
+```
+forever server.js
+```
+
+## Optional Configuration
+
+| Property   			| Description                    						|
+|-----------------------|-------------------------------------------------------|
+| `port` 				| The port you'd like your server to run on 			|
+| `locale`				| The locale you'd like to use for date/time display 	|
+| `logDest`				| The destination for your log file						|
+| `updateCron`			| The cron for how often you'd like the speedtest to run|
+| `timezone`			| The timezone your jobs should be based on				|
+| `speedtestTimeout`	| How long to wait for speedtest.net before canceling	|
+| `includeServer`		| Should the server used to test the speed be logged	|
+| `daysToKeep`			| The number of days of logs you'd like to keep			|
+| `recordsPerDay`		| How many records expected per day (for pruning)		|
