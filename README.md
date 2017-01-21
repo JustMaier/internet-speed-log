@@ -29,9 +29,9 @@ Start the http-server
 ```
 node server.js
 ```
-This will start a http-server on port 8000 (unless you've changed that in the config).
+This will start a http-server on port 8080 (unless you've changed that in the config).
 
-You can then navigate to http://localhost:8000 and view the index.html
+You can then navigate to http://localhost:8080 and view the index.html
 
 ### Usage with NAS
 
