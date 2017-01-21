@@ -35,8 +35,6 @@ function updateSpeedLog(){
 	});
 }
 
-updateSpeedLog();
-
 // Setup CronJob
 try{
 	new CronJob(config.updateCron, updateSpeedLog, null, true, config.timezone)
